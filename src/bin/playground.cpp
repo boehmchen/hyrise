@@ -17,11 +17,66 @@
 #include "expression/expression_functional.hpp"
 
 #include "types.hpp"
+#include "magic_enum.hpp"
 
 using namespace opossum;  // NOLINT
 using namespace opossum::expression_functional;
 
+
+// time control parameters
+int selectivityGranularity = 10;
+int column_size = 10000;
+int valueBytes = 10;
+
+// data specific parameters
+enum DataTypes {strings, integers, floats, doubles};
+enum EncodingType {value, dictionary, reference};  // TODO add all
+enum CompressionType {};  // TODO add possible types
+bool hasIndex;
+bool isSorted;
+
+// test specific paramters
+enum Operator {TableScan};  //, Join, Aggregation};
+
+// misc parameters
+enum TableScanPredicates {lt, BETWEEN, LIKE, ISNULL};
+
+//// Data Generation
+//for DistributionTypes:
+//  for DataTypes
+//    // all data_specific_paramters
+//    [...]
+//    generateColumn(createName(datatype, distributionType ...));
+//  ;
+//
+//// LQP Generation
+//for column in table:
+//    for paramters in execution_specific_parameters:
+//      result_timing = generateLQP(column, ...paramters).execute()
+//      write_to_csv(column, parameters, timing) // knows whether combination dosnt make sense
+//
+//
+//
+//generateColumn(){
+//
+//    }
+//
+//
+//write_to_csv () {
+//
+//    }
+//
+//generateLQP () {
+//
+//    }
+
 int main() {
+//    enum Color { RED, BLUE, GREEN };
+//
+//    Color color = Color::RED;
+//    auto color_name = magic_enum::enum_name(color);
+//    std::cout << color_name << std::endl;
+
     constexpr auto row_count = size_t{1000000};
     constexpr auto chunk_size = size_t{1000};
 

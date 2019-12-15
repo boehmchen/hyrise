@@ -14,7 +14,7 @@ add_executable(
     hyrisePlayground
 
     playground.cpp
-)
+        magic_enum.hpp)
 
 target_link_libraries(
     hyrisePlayground
