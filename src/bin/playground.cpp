@@ -42,14 +42,6 @@ enum Operators {TableScanOperator};  //, Join, Aggregation};
 // misc parameters
 enum TableScanPredicates {ltPredicate, BETWEENPredicate, LIKEPredicate, ISNULLPredicate};
 
-//// Data Generation
-//for DistributionTypes:
-//  for DataTypes
-//    // all data_specific_paramters
-//    [...]
-//    generateColumn(createName(datatype, distributionType ...));
-//  ;
-//
 //// LQP Generation
 //for column in table:
 //    for paramters in execution_specific_parameters:
@@ -72,11 +64,6 @@ enum TableScanPredicates {ltPredicate, BETWEENPredicate, LIKEPredicate, ISNULLPr
 //    }
 
 int main() {
-//    enum Color { RED, BLUE, GREEN };
-//
-//    Color color = Color::RED;
-//    auto color_name = magic_enum::enum_name(color);
-//    std::cout << color_name << std::endl;
 
     constexpr auto row_count = size_t{1000000};
     constexpr auto chunk_size = size_t{1000};
