@@ -29,17 +29,18 @@ int column_size = 10000;
 int valueBytes = 10;
 
 // data specific parameters
-enum DataTypes {strings, integers, floats, doubles};
-enum EncodingType {value, dictionary, reference};  // TODO add all
-enum CompressionType {};  // TODO add possible types
-bool hasIndex;
-bool isSorted;
+enum DataTypes {stringType, integerType, floatType, doubleType};
 
-// test specific paramters
-enum Operator {TableScan};  //, Join, Aggregation};
+enum EncodingTypes {valueEncoding, dictionaryEncoding, referenceEncoding, indexEncoding};  // TODO add all, check whether index is a type of its own
+enum CompressionTypes {};  // TODO add possible types
+enum DataDistributionTypes {uniformDistribution, randomDistribution};
+enum Sortings {noSorting, ascSorting};
+
+// test specific parameters
+enum Operators {TableScanOperator};  //, Join, Aggregation};
 
 // misc parameters
-enum TableScanPredicates {lt, BETWEEN, LIKE, ISNULL};
+enum TableScanPredicates {ltPredicate, BETWEENPredicate, LIKEPredicate, ISNULLPredicate};
 
 //// Data Generation
 //for DistributionTypes:
@@ -83,6 +84,37 @@ int main() {
     constexpr auto DELIMITER = ";";
     constexpr auto NEW_LINE = "\n";
 
+    // Table Generation
+    // Step 1 generate combinations to test for
+    std::vector<DataDistributionTypes> distribution = std::vector<DataDistributionTypes>();
+    std::vector<DataTypes> data_types = std::vector<DataTypes>();
+    std::vector<EncodingTypes > encoding = std::vector<EncodingTypes>();
+    std::vector<std::string> column_names = std::vector<std::string>();
+    int trail_count = 0;
+
+    for (DataDistributionTypes dist : magic_enum::enum_values<DataDistributionTypes>()) {
+      for (DataTypes dt : magic_enum::enum_values<DataTypes>()) {
+        for (EncodingTypes enc : magic_enum::enum_values<EncodingTypes>()) {
+          distribution.push_back(dist);
+          data_types.push_back(dt);
+          encoding.push_back(enc);
+
+          // generate Name
+          std::stringstream ss;
+          ss << magic_enum::enum_name(dist) << "_" << magic_enum::enum_name(dt) << "_" << magic_enum::enum_name(enc);
+          column_names.push_back(ss.str());
+
+          trail_count++;
+        }
+      }
+    }
+
+    // Step 2 convert to correct values for generation
+    // TODO
+
+
+    // Step 3 generate
+
     auto table_generator = std::make_shared<SyntheticTableGenerator>();
     auto uniform_distribution_0_1 = ColumnDataDistribution::make_uniform_config(0.0, 10000.0);
 
@@ -96,6 +128,7 @@ int main() {
             UseMvcc::Yes    // MVCC = Multiversion concurrency control
                                       // this must be true because only MVCC tables can be added to storage manager
     );
+
 
     Hyrise::get().storage_manager.add_table("t_a", table);
     //const auto _t_a_a = Hyrise::get().storage_manager.get_table("t_a");
