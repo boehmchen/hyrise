@@ -6,8 +6,8 @@
 #include <logical_query_plan/lqp_translator.hpp>
 #include <scheduler/operator_task.hpp>
 #include <cost_calibration/lqp_generator.hpp>
-#include <fstream>
-#include <cost_calibration/table_export.hpp>
+#include <operators/table_wrapper.hpp>
+#include <operators/export_csv.hpp>
 #include "types.hpp"
 #include "hyrise.hpp"
 
@@ -57,27 +57,32 @@ int main() {
   auto table_generator = TableGenerator(table_config);
   const auto tables = table_generator.generate();
 
-  const auto lqp_generator = LQPGenerator();
-
   auto const path = ".";
-  const auto measurement_export = MeasurementExport(path);
-  const auto table_export = TableExport(path);
+  auto measurement_export = MeasurementExport(path);
+  auto lqp_generator = LQPGenerator();
 
   for (const auto &table : tables){
     Hyrise::get().storage_manager.add_table(table->get_name(), table->get_table());
+
+    auto table_wrapper = std::make_shared<TableWrapper>(table->get_table());
+    table_wrapper->execute();
+    auto ex = std::make_shared<opossum::ExportCsv>(table_wrapper, "./test.csv");
+    ex->execute();
 
     const auto lqps = lqp_generator.generate(OperatorType::TableScan, table);
 
     //Execution of lpqs; In the future a good scheduler as replacement for following code would be awesome.
     for (const std::shared_ptr<AbstractLQPNode>& lqp : lqps) {
       const auto pqp = LQPTranslator{}.translate_node(lqp);
-      const auto tasks = OperatorTask::make_tasks_from_operator(pqp, CleanupTemporaries::No);
+      const auto tasks = OperatorTask::make_tasks_from_operator(pqp, CleanupTemporaries::Yes);
       Hyrise::get().scheduler()->schedule_and_wait_for_tasks(tasks);
 
       //Execute LQP directly after generation
       measurement_export.export_to_csv(pqp);
     }
-    table_export.export_table(table);
+
+    table->export_table_meta_data(path); //TODO meta_data_only_export
     Hyrise::get().storage_manager.drop_table(table->get_name());
   }
+
 }
