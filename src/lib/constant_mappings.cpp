@@ -10,6 +10,7 @@
 #include "expression/aggregate_expression.hpp"
 #include "storage/vector_compression/vector_compression.hpp"
 #include "utils/make_bimap.hpp"
+#include "compressed_vector_type.hpp"
 
 namespace opossum {
 
@@ -93,6 +94,14 @@ const boost::bimap<OperatorType, std::string> operator_type_to_string =
         {OperatorType::Mock, "Mock" },
     });
 
+const boost::bimap<VectorCompressionType, std::string> vector_compression_type_to_string =
+  make_bimap<VectorCompressionType, std::string>({
+    {VectorCompressionType::FixedSize4ByteAligned, "FixedSize4ByteAligned"},
+    {VectorCompressionType::FixedSize2ByteAligned, "FixedSize2ByteAligned"},
+    {VectorCompressionType::FixedSize1ByteAligned, "FixedSize1ByteAligned"},
+    {VectorCompressionType::SimdBp128, "SimdBp128"},
+  });
+
 std::ostream& operator<<(std::ostream& stream, AggregateFunction aggregate_function) {
   return stream << aggregate_function_to_string.left.at(aggregate_function);
 }
@@ -117,15 +126,6 @@ std::ostream& operator<<(std::ostream& stream, OperatorType operator_type) {
   return stream << operator_type_to_string.left.at(operator_type);
 }
 
-std::ostream& operator<<(std::ostream& stream, const SegmentEncodingSpec& spec) {
-  stream << spec.encoding_type;
-  if (spec.vector_compression_type) {
-    stream << "-" << *spec.vector_compression_type;
-  }
-
-  return stream;
-}
-
 std::ostream& operator<<(std::ostream& stream, ColumnDataDistribution column_data_distribution) {
     stream << data_distribution_type_to_string.left.at(column_data_distribution.distribution_type) << "_";
     switch (column_data_distribution.distribution_type){
@@ -146,6 +146,16 @@ std::ostream& operator<<(std::ostream& stream, ColumnDataDistribution column_dat
     return stream;
 }
 
+std::ostream& operator<<(std::ostream& stream, VectorCompressionType vector_compression_type) {
+  return stream << vector_compression_type_to_string.left.at(vector_compression_type);
+}
 
+std::ostream& operator<<(std::ostream& stream, const SegmentEncodingSpec& spec) {
+  stream << spec.encoding_type;
+  if (spec.vector_compression_type) {
+    stream << "-" << *spec.vector_compression_type;
+  }
 
+  return stream;
+}
 }  // namespace opossum

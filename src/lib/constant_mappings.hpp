@@ -29,6 +29,7 @@ extern const boost::bimap<EncodingType, std::string> encoding_type_to_string;
 extern const boost::bimap<VectorCompressionType, std::string> vector_compression_type_to_string;
 extern const boost::bimap<DataDistributionType, std::string> data_distribution_type_to_string;
 extern const boost::bimap<OperatorType, std::string> operator_type_to_string;
+extern const boost::bimap<CompressedVectorType, std::string> compressed_vector_type_to_string;
 
 std::ostream& operator<<(std::ostream& stream, AggregateFunction aggregate_function);
 std::ostream& operator<<(std::ostream& stream, FunctionType function_type);
@@ -36,7 +37,18 @@ std::ostream& operator<<(std::ostream& stream, DataType data_type);
 std::ostream& operator<<(std::ostream& stream, EncodingType encoding_type);
 std::ostream& operator<<(std::ostream& stream, VectorCompressionType vector_compression_type);
 std::ostream& operator<<(std::ostream& stream, OperatorType operator_type);
+std::ostream& operator<<(std::ostream& stream, ColumnDataDistribution column_data_distribution);
+std::ostream& operator<<(std::ostream& stream, CompressedVectorType column_data_distribution);
 std::ostream& operator<<(std::ostream& stream, const SegmentEncodingSpec& spec);
-std::ostream& operator<<(std::ostream& stream, const ColumnDataDistribution column_data_distribution);
 
+//TODO is this dangerous?
+template <typename T>
+std::ostream& operator<<(std::ostream& stream, const std::optional<T> optional_value) {
+  if (optional_value){
+    stream << *optional_value;
+  } else {
+    stream << "null";
+  }
+  return stream;
+}
 }  // namespace opossum
