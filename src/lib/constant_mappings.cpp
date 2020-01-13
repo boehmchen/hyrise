@@ -8,9 +8,8 @@
 
 #include "expression/abstract_expression.hpp"
 #include "expression/aggregate_expression.hpp"
-#include "storage/vector_compression/vector_compression.hpp"
+#include "storage/vector_compression/compressed_vector_type.hpp"
 #include "utils/make_bimap.hpp"
-#include "compressed_vector_type.hpp"
 
 namespace opossum {
 
@@ -94,12 +93,12 @@ const boost::bimap<OperatorType, std::string> operator_type_to_string =
         {OperatorType::Mock, "Mock" },
     });
 
-const boost::bimap<VectorCompressionType, std::string> vector_compression_type_to_string =
-  make_bimap<VectorCompressionType, std::string>({
-    {VectorCompressionType::FixedSize4ByteAligned, "FixedSize4ByteAligned"},
-    {VectorCompressionType::FixedSize2ByteAligned, "FixedSize2ByteAligned"},
-    {VectorCompressionType::FixedSize1ByteAligned, "FixedSize1ByteAligned"},
-    {VectorCompressionType::SimdBp128, "SimdBp128"},
+const boost::bimap<CompressedVectorType, std::string> compressed_vector_type_to_string =
+  make_bimap<CompressedVectorType, std::string>({
+    {CompressedVectorType::FixedSize4ByteAligned, "FixedSize4ByteAligned"},
+    {CompressedVectorType::FixedSize2ByteAligned, "FixedSize2ByteAligned"},
+    {CompressedVectorType::FixedSize1ByteAligned, "FixedSize1ByteAligned"},
+    {CompressedVectorType::SimdBp128, "SimdBp128"},
   });
 
 std::ostream& operator<<(std::ostream& stream, AggregateFunction aggregate_function) {
@@ -146,8 +145,8 @@ std::ostream& operator<<(std::ostream& stream, ColumnDataDistribution column_dat
     return stream;
 }
 
-std::ostream& operator<<(std::ostream& stream, VectorCompressionType vector_compression_type) {
-  return stream << vector_compression_type_to_string.left.at(vector_compression_type);
+std::ostream& operator<<(std::ostream& stream, CompressedVectorType compressed_vector_type) {
+  return stream << compressed_vector_type_to_string.left.at(compressed_vector_type);
 }
 
 std::ostream& operator<<(std::ostream& stream, const SegmentEncodingSpec& spec) {

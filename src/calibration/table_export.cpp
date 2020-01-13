@@ -140,7 +140,11 @@ namespace opossum {
             ss << encoded_segment->encoding_type() << _separator;
 
             // Compressed Vector Type
-            ss << encoded_segment->compressed_vector_type() << "\n";
+            if (const auto compressed_vector_type = encoded_segment->compressed_vector_type()){
+              ss << *compressed_vector_type << "\n";
+            } else {
+              ss << "null" << "\n";
+            }
 
           // if segment is not encoded write default values for chunk;
           } else {

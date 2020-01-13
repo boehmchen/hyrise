@@ -40,15 +40,3 @@ std::ostream& operator<<(std::ostream& stream, OperatorType operator_type);
 std::ostream& operator<<(std::ostream& stream, ColumnDataDistribution column_data_distribution);
 std::ostream& operator<<(std::ostream& stream, CompressedVectorType column_data_distribution);
 std::ostream& operator<<(std::ostream& stream, const SegmentEncodingSpec& spec);
-
-//TODO is this dangerous?
-template <typename T>
-std::ostream& operator<<(std::ostream& stream, const std::optional<T> optional_value) {
-  if (optional_value){
-    stream << *optional_value;
-  } else {
-    stream << "null";
-  }
-  return stream;
-}
-}  // namespace opossum
