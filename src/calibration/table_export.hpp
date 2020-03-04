@@ -11,9 +11,24 @@ enum TableExportType {
 };
 
 class TableExport{
+ /**
+  * TableExport exports a table meta information by creating three CSV files in the provided directory.
+  *
+  * This class exports a Calibration Table
+  * - table_meta.csv: contains table information e.g. chunk_size, row_size
+  * - column_meta.csv: contains information about all columns of all tables (columns can be mapped to tables via python)
+  * - segment_meta: contains information about segments (segments can be mapped to columns)
+  *
+  * @note TableExport does not delete old files at the moment
+  */
  public:
     TableExport(const std::string& path_to_dir);
 
+    /**
+     * Exports given table as described above.
+     *
+     * @param table_wrapper CalibrationTableWrapper contains additional information for a table
+     */
     void export_table(std::shared_ptr<const CalibrationTableWrapper> table_wrapper) const;
 
 private:
