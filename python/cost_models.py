@@ -173,7 +173,6 @@ def main(args):
 
     # make separate models for different scan operators and combinations of encodings/compressions
     for encoding in train_data['ENCODING'].unique():
-        #for data_type in train_data['DATA_TYPE'].unique():
         for implementation_type in train_data['SCAN_IMPLEMENTATION'].unique():
 
             # if there is no given test data set, split the given trainings data into test and trainings data
@@ -185,9 +184,6 @@ def main(args):
             else:
                 model_train_data = train_data.loc[(train_data['ENCODING'] == encoding) & (train_data['SCAN_IMPLEMENTATION'] == implementation_type)]
                 model_test_data = test_data.loc[(test_data['ENCODING'] == encoding) & (test_data['SCAN_IMPLEMENTATION'] == implementation_type)]
-
-                print('test', model_test_data['SCAN_IMPLEMENTATION'])
-                #print('train', model_train_data)
 
             # if there is training data for this combination, train a model
             if not model_train_data.empty:
