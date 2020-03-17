@@ -88,7 +88,7 @@ def calculate_error(test_X, y_true, y_pred, model):
     # relatively hard, whereas it treats large residuals comparably easy.
     LNQ = 1/len(y_true) * np.sum(np.exp(np.divide(y_pred, y_true)))
 
-    scores = {'MSE': mse, 'R2': R2, 'LNQ': LNQ}
+    scores = {'MSE': '%.3f' % mse, 'R2': '%.3f' % R2, 'LNQ': '%.3f' % LNQ}
     print(scores)
 
     return scores
@@ -175,7 +175,6 @@ def main(args):
     for encoding in train_data['ENCODING'].unique():
         #for data_type in train_data['DATA_TYPE'].unique():
         for implementation_type in train_data['SCAN_IMPLEMENTATION'].unique():
-            print(implementation_type)
 
             # if there is no given test data set, split the given trainings data into test and trainings data
             if not args.test:
