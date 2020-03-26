@@ -65,6 +65,8 @@ def generate_model_plot(model, test_data, method, encoding, scan, out):
     plt.savefig(output_path, bbox_inches='tight')
     plt.close()
 
+    return model_scores
+
 
 def calculate_error(test_X, y_true, y_pred, model):
     # calculate error (ME) for the model
@@ -89,9 +91,14 @@ def calculate_error(test_X, y_true, y_pred, model):
     LNQ = 1/len(y_true) * np.sum(np.exp(np.divide(y_pred, y_true)))
 
     scores = {'MSE': '%.3f' % mse, 'R2': '%.3f' % R2, 'LNQ': '%.3f' % LNQ}
-    print(scores)
 
     return scores
+
+
+def log(scores, out):
+    with open('{}/log.txt'.format(out), 'w') as file:
+        for entry in scores:
+            file.write(entry + ': ' + str(scores[entry]) +  '\n')
 
 
 # needed for prediction with one-hot-encoding in case trainings and test data don't have the same set of values in a
@@ -141,6 +148,7 @@ def import_data(args):
 
 def main(args):
     out = "CostModelOutput"
+    scores = {}
 
     if args.m:
         model_types = [args.m]
@@ -191,11 +199,13 @@ def main(args):
                     model_train_data, model_test_data = add_dummy_types(model_train_data.copy(), model_test_data.copy(), ['COMPRESSION_TYPE', 'SCAN_TYPE', 'DATA_TYPE'])
                     model = train_model(model_train_data, type)
 
-                    filename = '{}/Models/split_{}_{}_{}_model.sav'.format(out, type, encoding, implementation_type)
+                    model_name = '{}_{}_{}_model'.format(type, encoding, implementation_type)
+                    filename = '{}/Models/split_{}.sav'.format(out, model_name)
                     joblib.dump(model, filename)
 
                     if not model_test_data.empty:
-                        generate_model_plot(model, model_test_data, type, encoding, implementation_type, out)
+                        scores[model_name] = generate_model_plot(model, model_test_data, type, encoding, implementation_type, out)
+    log(scores, out)
 
 
 if __name__ == '__main__':
