@@ -9,8 +9,7 @@ add_executable(
 
 target_link_libraries(
     hyriseCalibration
+
     hyrise
     hyriseCalibrationLib
 )
-
-target_link_libraries_system(hyriseCalibration nlohmann_json::nlohmann_json)
