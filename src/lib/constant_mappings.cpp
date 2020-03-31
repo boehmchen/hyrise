@@ -175,7 +175,6 @@ std::ostream& operator<<(std::ostream& stream, const SegmentEncodingSpec spec) {
   if (spec.vector_compression_type) {
     stream << "-" << *spec.vector_compression_type;
   }
-
   return stream;
 }
 

@@ -44,7 +44,6 @@ std::ostream& operator<<(std::ostream& stream, const VectorCompressionType vecto
 std::ostream& operator<<(std::ostream& stream, const CompressedVectorType compressed_vector_type);
 std::ostream& operator<<(std::ostream& stream, const OperatorType operator_type);
 std::ostream& operator<<(std::ostream& stream, const ColumnDataDistribution column_data_distribution);
-std::ostream& operator<<(std::ostream& stream, const CompressedVectorType compressed_vector_type);
 std::ostream& operator<<(std::ostream& stream, const SegmentEncodingSpec spec);
 
 }  // namespace opossum
