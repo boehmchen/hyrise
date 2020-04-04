@@ -14,6 +14,10 @@ using namespace opossum;  // NOLINT
 
 int main() {
 
+  // Export directories
+  constexpr auto path_train = "./data/train";
+  constexpr auto path_test = "./data/test";
+
   // table generation settings
   const std::set<DataType> table_data_types = {DataType::Double, DataType::Float, DataType::Int, DataType::Long, DataType::String, DataType::Null};
   const std::set<EncodingType> column_encoding_types = {EncodingType::Dictionary};
@@ -22,9 +26,10 @@ int main() {
   const std::set<int> row_counts = {1500, 3000, 6000, 10000, 20000, 30000, 60175, 25, 15000, 2000, 8000, 5, 100};
 
   // test data generation settings
+  constexpr bool generate_test_data = true;
   constexpr BenchmarkType benchmark_type = BenchmarkType::TCPH;
   constexpr float scale_factor = 0.01f;
-  constexpr int number_benchmark_executions = 10;
+  constexpr int number_benchmark_executions = 1;
 
   auto table_config = std::make_shared<TableGeneratorConfig>(TableGeneratorConfig{
       table_data_types,
@@ -36,16 +41,14 @@ int main() {
   auto table_generator = CalibrationTableGenerator(table_config);
   const auto tables = table_generator.generate();
 
-  auto const path_train = "./data/train";
-  auto const path_test = "./data/test";
+  if(generate_test_data){
+    auto benchmark_runner = CalibrationBenchmarkRunner(path_test);
+    benchmark_runner.run_benchmark(benchmark_type, scale_factor, number_benchmark_executions);
+  }
 
   const auto feature_exporter = OperatorFeatureExporter(path_train);
   auto lqp_generator = CalibrationLQPGenerator();
   auto table_exporter = TableFeatureExporter(path_train);
-
-  auto benchmark_runner = CalibrationBenchmarkRunner(path_test);
-
-  benchmark_runner.run_benchmark(benchmark_type, scale_factor, number_benchmark_executions);
 
   for (const auto& table : tables) {
     Hyrise::get().storage_manager.add_table(table->get_name(), table->get_table());
