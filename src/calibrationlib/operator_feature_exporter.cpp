@@ -1,5 +1,4 @@
-#include <regex>
-
+#include <boost/algorithm/string.hpp>
 #include <expression/expression_utils.hpp>
 #include <expression/lqp_column_expression.hpp>
 #include <logical_query_plan/stored_table_node.hpp>
@@ -80,15 +79,15 @@ void OperatorFeatureExporter::_export_table_scan(std::shared_ptr<const AbstractO
           const auto table = Hyrise::get().storage_manager.get_table(table_name);
           csv_writer->set_value("COLUMN_NAME", table->column_names()[original_column_id]);
 
-          auto description = op->description();
-          std::smatch matches;
+          const auto description = op->description();
 
-          std::regex self_regex("Impl: ([A-Z]\\w+)", std::regex_constants::ECMAScript | std::regex_constants::icase);
-          if (std::regex_search(description, matches, self_regex)) {
-            csv_writer->set_value("SCAN_IMPLEMENTATION", matches[1]);
-          } else {
-            csv_writer->set_value("SCAN_IMPLEMENTATION", CSVWriter::NA);
-          }
+          // Example Description: TableScan Impl: ColumnVsValue c_acctbal > SUBQUERY (PQP, 0x179d55098)
+          // We need the scan implementation of the string above (here: ColumnVsValue)
+
+          // Split the description by " " and extract the word with index 2
+          std::vector<std::string> description_values;
+          boost::split(description_values, description, boost::is_any_of(" "));
+          csv_writer->set_value("SCAN_IMPLEMENTATION", description_values[2]);
 
           csv_writer->write_row();
         }
