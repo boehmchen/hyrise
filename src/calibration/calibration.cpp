@@ -7,8 +7,8 @@
 #include "calibration_benchmark_runner.hpp"
 #include "calibration_lqp_generator.hpp"
 #include "calibration_table_generator.hpp"
-#include "operator_feature_export.hpp"
-#include "table_feature_export.hpp"
+#include "operator_feature_exporter.hpp"
+#include "table_feature_exporter.hpp"
 
 using namespace opossum;  // NOLINT
 
@@ -39,9 +39,9 @@ int main() {
   auto const path_train = "./data/train";
   auto const path_test = "./data/test";
 
-  const auto feature_export = OperatorFeatureExport(path_train);
+  const auto feature_exporter = OperatorFeatureExporter(path_train);
   auto lqp_generator = CalibrationLQPGenerator();
-  auto table_export = TableFeatureExport(path_train);
+  auto table_exporter = TableFeatureExporter(path_train);
 
   auto benchmark_runner = CalibrationBenchmarkRunner(path_test);
 
@@ -61,11 +61,11 @@ int main() {
     Hyrise::get().scheduler()->schedule_and_wait_for_tasks(tasks);
 
     // Export LQP directly after generation
-    feature_export.export_to_csv(pqp);
+    feature_exporter.export_to_csv(pqp);
   }
 
   for (const auto& table : tables) {
-    table_export.export_table(table);
+    table_exporter.export_table(table);
     Hyrise::get().storage_manager.drop_table(table->get_name());
   }
 }

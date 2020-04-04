@@ -10,13 +10,13 @@
 namespace opossum {
 
 CalibrationBenchmarkRunner::CalibrationBenchmarkRunner(const std::string& path_to_dir)
-    : _feature_export(OperatorFeatureExport(path_to_dir)), _table_export(TableFeatureExport(path_to_dir)) {
+    : _feature_exporter(OperatorFeatureExporter(path_to_dir)), _table_exporter(TableFeatureExporter(path_to_dir)) {
   _config = std::make_shared<BenchmarkConfig>(BenchmarkConfig::get_default_config());
 }
 
 CalibrationBenchmarkRunner::CalibrationBenchmarkRunner(const std::string& path_to_dir,
                                                        std::shared_ptr<BenchmarkConfig> config)
-    : _feature_export(OperatorFeatureExport(path_to_dir)), _table_export(TableFeatureExport(path_to_dir)) {
+    : _feature_exporter(OperatorFeatureExporter(path_to_dir)), _table_exporter(TableFeatureExporter(path_to_dir)) {
   _config = config;
 }
 
@@ -45,7 +45,7 @@ void CalibrationBenchmarkRunner::run_benchmark(const BenchmarkType type, const f
 
     for (auto pqp_entry = pqp_cache->unsafe_begin(); pqp_entry != pqp_cache->unsafe_end(); ++pqp_entry) {
       const auto& [query_string, physical_query_plan] = *pqp_entry;
-      _feature_export.export_to_csv(physical_query_plan);
+      _feature_exporter.export_to_csv(physical_query_plan);
     }
 
     // Clear pqp cache for next benchmark run
@@ -55,7 +55,7 @@ void CalibrationBenchmarkRunner::run_benchmark(const BenchmarkType type, const f
   const std::vector<std::string> table_names = Hyrise::get().storage_manager.table_names();
   for (const auto& table_name : table_names) {
     auto table = Hyrise::get().storage_manager.get_table(table_name);
-    _table_export.export_table(std::make_shared<CalibrationTableWrapper>(CalibrationTableWrapper(table, table_name)));
+    _table_exporter.export_table(std::make_shared<CalibrationTableWrapper>(CalibrationTableWrapper(table, table_name)));
 
     Hyrise::get().storage_manager.drop_table(table_name);
   }

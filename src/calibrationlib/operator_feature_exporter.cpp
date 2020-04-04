@@ -6,14 +6,14 @@
 #include <utils/assert.hpp>
 #include "csv_writer.hpp"
 #include "hyrise.hpp"
-#include "operator_feature_export.hpp"
+#include "operator_feature_exporter.hpp"
 #include "storage/table.hpp"
 
 namespace opossum {
 
-OperatorFeatureExport::OperatorFeatureExport(const std::string& path_to_dir) : _path_to_dir(path_to_dir) {}
+OperatorFeatureExporter::OperatorFeatureExporter(const std::string& path_to_dir) : _path_to_dir(path_to_dir) {}
 
-void OperatorFeatureExport::export_to_csv(std::shared_ptr<const AbstractOperator> op) const {
+void OperatorFeatureExporter::export_to_csv(std::shared_ptr<const AbstractOperator> op) const {
   if (op) {
     // Export current operator
     _export_typed_operator(op);
@@ -23,7 +23,7 @@ void OperatorFeatureExport::export_to_csv(std::shared_ptr<const AbstractOperator
   }
 }
 
-void OperatorFeatureExport::_export_typed_operator(std::shared_ptr<const AbstractOperator> op) const {
+void OperatorFeatureExporter::_export_typed_operator(std::shared_ptr<const AbstractOperator> op) const {
   switch (op->type()) {
     case OperatorType::TableScan:
       _export_table_scan(op);
@@ -34,7 +34,7 @@ void OperatorFeatureExport::_export_typed_operator(std::shared_ptr<const Abstrac
 }
 
 // Export features of a table scan operator
-void OperatorFeatureExport::_export_table_scan(std::shared_ptr<const AbstractOperator> op) const {
+void OperatorFeatureExporter::_export_table_scan(std::shared_ptr<const AbstractOperator> op) const {
   DebugAssert(op->type() == OperatorType::TableScan, "Expected operator of type: TableScan but got another one");
 
   auto csv_writer = _csv_writers.at(op->type());

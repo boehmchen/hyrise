@@ -7,9 +7,9 @@
 
 namespace opossum {
 
-class OperatorFeatureExport {
+class OperatorFeatureExporter {
  public:
-  explicit OperatorFeatureExport(const std::string& path_to_dir);
+  explicit OperatorFeatureExporter(const std::string& path_to_dir);
 
   void export_to_csv(std::shared_ptr<const AbstractOperator> op) const;
 
