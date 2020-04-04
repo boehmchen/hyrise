@@ -1,5 +1,5 @@
-
 #include <fstream>
+
 #include <boost/algorithm/string.hpp>
 #include "base_test.hpp"
 #include "calibration_lqp_generator.hpp"

@@ -33,8 +33,7 @@ std::vector<std::shared_ptr<const CalibrationTableWrapper>> CalibrationTableGene
 
   for (int chunk_size : _config->chunk_sizes) {
     for (int row_count : _config->row_counts) {
-      const auto table = table_generator->generate_table(_column_specs, row_count, chunk_size,
-                                                         UseMvcc::Yes);
+      const auto table = table_generator->generate_table(_column_specs, row_count, chunk_size, UseMvcc::Yes);
 
       const std::string table_name = std::to_string(chunk_size) + "_" + std::to_string(row_count);
 

@@ -1,3 +1,4 @@
+#include "operator_feature_exporter.hpp"
 #include <boost/algorithm/string.hpp>
 #include <expression/expression_utils.hpp>
 #include <expression/lqp_column_expression.hpp>
@@ -5,7 +6,6 @@
 #include <utils/assert.hpp>
 #include "csv_writer.hpp"
 #include "hyrise.hpp"
-#include "operator_feature_exporter.hpp"
 #include "storage/table.hpp"
 
 namespace opossum {
@@ -48,7 +48,6 @@ void OperatorFeatureExporter::_export_table_scan(std::shared_ptr<const AbstractO
         const auto original_node = column_reference.original_node();
 
         if (original_node->type == LQPNodeType::StoredTable) {
-
           if (op->input_left()) {
             csv_writer->set_value("INPUT_ROWS_LEFT", op->input_left()->performance_data().output_row_count);
           } else {

@@ -153,7 +153,6 @@ TEST_F(CSVWriterTest, WriteMultipleRowsToFile) {
     std::getline(f, line);
     EXPECT_EQ(line, ss.str());
   }
-
 }
 
 TEST_F(CSVWriterTest, ReplaceExistingFileIfFlagIsSet) {

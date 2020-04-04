@@ -1,33 +1,33 @@
 #include <fstream>
 
-#include "calibration_benchmark_runner.hpp"
 #include <benchmark_runner.hpp>
 #include <file_based_benchmark_item_runner.hpp>
 #include <file_based_table_generator.hpp>
 #include <tpcds/tpcds_table_generator.hpp>
 #include <tpch/tpch_benchmark_item_runner.hpp>
 #include <tpch/tpch_table_generator.hpp>
+#include "calibration_benchmark_runner.hpp"
 #include "hyrise.hpp"
 
 namespace {
-    const std::unordered_set<std::string> filename_blacklist() {
-      auto filename_blacklist = std::unordered_set<std::string>{};
-      const auto blacklist_file_path = "resources/benchmark/tpcds/query_blacklist.cfg";
-      std::ifstream blacklist_file(blacklist_file_path);
+const std::unordered_set<std::string> filename_blacklist() {
+  auto filename_blacklist = std::unordered_set<std::string>{};
+  const auto blacklist_file_path = "resources/benchmark/tpcds/query_blacklist.cfg";
+  std::ifstream blacklist_file(blacklist_file_path);
 
-      if (!blacklist_file) {
-        std::cerr << "Cannot open the blacklist file: " << blacklist_file_path << "\n";
-      } else {
-        std::string filename;
-        while (std::getline(blacklist_file, filename)) {
-          if (filename.size() > 0 && filename.at(0) != '#') {
-            filename_blacklist.emplace(filename);
-          }
-        }
-        blacklist_file.close();
+  if (!blacklist_file) {
+    std::cerr << "Cannot open the blacklist file: " << blacklist_file_path << "\n";
+  } else {
+    std::string filename;
+    while (std::getline(blacklist_file, filename)) {
+      if (filename.size() > 0 && filename.at(0) != '#') {
+        filename_blacklist.emplace(filename);
       }
-      return filename_blacklist;
     }
+    blacklist_file.close();
+  }
+  return filename_blacklist;
+}
 }  // namespace
 
 namespace opossum {
@@ -99,8 +99,7 @@ std::shared_ptr<BenchmarkRunner> CalibrationBenchmarkRunner::_build_tcpds(const 
 
   const std::string query_path = "resources/benchmark/tpcds/tpcds-result-reproduction/query_qualification";
 
-  auto query_generator =
-      std::make_unique<FileBasedBenchmarkItemRunner>(_config, query_path, filename_blacklist());
+  auto query_generator = std::make_unique<FileBasedBenchmarkItemRunner>(_config, query_path, filename_blacklist());
   auto table_generator = std::make_unique<TpcdsTableGenerator>(scale_factor, _config);
   auto benchmark_runner =
       std::make_shared<BenchmarkRunner>(*_config, std::move(query_generator), std::move(table_generator),

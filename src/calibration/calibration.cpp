@@ -13,15 +13,16 @@
 using namespace opossum;  // NOLINT
 
 int main() {
-
   // Export directories
   constexpr auto path_train = "./data/train";
   constexpr auto path_test = "./data/test";
 
   // table generation settings
-  const std::set<DataType> table_data_types = {DataType::Double, DataType::Float, DataType::Int, DataType::Long, DataType::String, DataType::Null};
+  const std::set<DataType> table_data_types = {DataType::Double, DataType::Float,  DataType::Int,
+                                               DataType::Long,   DataType::String, DataType::Null};
   const std::set<EncodingType> column_encoding_types = {EncodingType::Dictionary};
-  const std::vector<ColumnDataDistribution> column_data_distributions = {ColumnDataDistribution::make_uniform_config(0.0, 1000.0)};
+  const std::vector<ColumnDataDistribution> column_data_distributions = {
+      ColumnDataDistribution::make_uniform_config(0.0, 1000.0)};
   const std::set<ChunkOffset> chunk_sizes = {Chunk::DEFAULT_SIZE};
   const std::set<int> row_counts = {1500, 3000, 6000, 10000, 20000, 30000, 60175, 25, 15000, 2000, 8000, 5, 100};
 
@@ -32,16 +33,12 @@ int main() {
   constexpr int number_benchmark_executions = 1;
 
   auto table_config = std::make_shared<TableGeneratorConfig>(TableGeneratorConfig{
-      table_data_types,
-      column_encoding_types,
-      column_data_distributions,
-      chunk_sizes,
-      row_counts});
+      table_data_types, column_encoding_types, column_data_distributions, chunk_sizes, row_counts});
 
   auto table_generator = CalibrationTableGenerator(table_config);
   const auto tables = table_generator.generate();
 
-  if(generate_test_data){
+  if (generate_test_data) {
     auto benchmark_runner = CalibrationBenchmarkRunner(path_test);
     benchmark_runner.run_benchmark(benchmark_type, scale_factor, number_benchmark_executions);
   }
