@@ -14,7 +14,7 @@ namespace opossum {
 OperatorFeatureExport::OperatorFeatureExport(const std::string& path_to_dir) : _path_to_dir(path_to_dir) {}
 
 void OperatorFeatureExport::export_to_csv(std::shared_ptr<const AbstractOperator> op) const {
-  if (op != nullptr) {
+  if (op) {
     // Export current operator
     _export_typed_operator(op);
 
@@ -49,31 +49,27 @@ void OperatorFeatureExport::_export_table_scan(std::shared_ptr<const AbstractOpe
         const auto original_node = column_reference.original_node();
 
         if (original_node->type == LQPNodeType::StoredTable) {
-          // Get values for INPUT_ROWS_LEFT
-          if (op->input_left() != nullptr) {
+
+          if (op->input_left()) {
             csv_writer->set_value("INPUT_ROWS_LEFT", op->input_left()->performance_data().output_row_count);
           } else {
             csv_writer->set_value("INPUT_ROWS_LEFT", CSVWriter::NA);
           }
 
-          // Get values for OUTPUT_ROWS & RUNTIME_NS
           if (op->performance_data().has_output) {
             csv_writer->set_value("OUTPUT_ROWS", op->performance_data().output_row_count);
-            // Get values for RUNTIME_NS
             csv_writer->set_value("RUNTIME_NS", op->performance_data().walltime.count());
           } else {
             csv_writer->set_value("OUTPUT_ROWS", CSVWriter::NA);
             csv_writer->set_value("RUNTIME_NS", CSVWriter::NA);
           }
 
-          // Get values for SCAN_IMPLEMENTATION
           if (original_node == node->left_input()) {
             csv_writer->set_value("SCAN_TYPE", "COLUMN_SCAN");
           } else {
             csv_writer->set_value("SCAN_TYPE", "REFERENCE_SCAN");
           }
 
-          // Get values for TABLE_NAME
           const auto stored_table_node = std::dynamic_pointer_cast<const StoredTableNode>(original_node);
           const auto& table_name = stored_table_node->table_name;
 
@@ -81,11 +77,9 @@ void OperatorFeatureExport::_export_table_scan(std::shared_ptr<const AbstractOpe
 
           const auto original_column_id = column_reference.original_column_id();
 
-          // Get values for COLUMN_NAME
           const auto table = Hyrise::get().storage_manager.get_table(table_name);
           csv_writer->set_value("COLUMN_NAME", table->column_names()[original_column_id]);
 
-          // Get values for SCAN_IMPLEMENTATION
           auto description = op->description();
           std::smatch matches;
 
@@ -96,7 +90,6 @@ void OperatorFeatureExport::_export_table_scan(std::shared_ptr<const AbstractOpe
             csv_writer->set_value("SCAN_IMPLEMENTATION", CSVWriter::NA);
           }
 
-          // Write row to file (the function validates if we have added all values)
           csv_writer->write_row();
         }
       }

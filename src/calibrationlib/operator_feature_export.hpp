@@ -115,7 +115,7 @@ class OperatorFeatureExport {
       case OperatorType::Mock:
         return "Mock";
       default:
-        throw std::runtime_error("Requested mapping for unknown OperatorType");
+        Fail("Requested mapping for unknown OperatorType");
     }
   }
 };
